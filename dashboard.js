@@ -26,7 +26,7 @@ function rendernav(){
                     </li>
     
                     <li class="nav-item">
-                        <button id="logout" class="btn btn-dark ">出缺席紀錄</button>
+                        <button id="viewRecord" class="btn btn-dark ">出缺席紀錄</button>
                     </li>
                     
                 </ul>
