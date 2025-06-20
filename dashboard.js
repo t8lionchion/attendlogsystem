@@ -34,6 +34,95 @@ function rendernav(){
             </div>
         </div>`;
 }
+/* 一般使用者出缺席卡片 */
+function renderviewcard(){
+    return`
+    <div class="col-md-4 col-lg-2">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <h6 class="card-title text-muted ">總課程時數</h6>
+                    <h3 data-attend="ex1" class="text-primary"></h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-2">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <h6 class="card-title text-muted ">實際上課</h6>
+                    <h3 data-attend="ex2" class="text-success"></h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-2">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <h6 class="card-title text-muted ">缺席</h6>
+                    <h3 data-attend="ex3" class="text-danger"></h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-2">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <h6 class="card-title text-muted ">遲到</h6>
+                    <h3 data-attend="ex4" class="text-warning"></h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-2">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">早退</h6>
+                    <h3 data-attend="ex5" class="text-warning"></h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-2">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <h6 class="card-title text-muted ">出勤比率</h6>
+                    <h3 data-attend="ex6" class="text-info"></h3>
+                </div>
+            </div>
+        </div>
+    `;
+}
+/* 一般使用者的3張圖表 */
+function renderthreechart(){
+    return`
+    <div class="row d-flex justify-content-center">
+            <div class="col-lg-4">
+                <div class="card">
+                    <h1 class="card-title text-center bg-primary">出席狀況圓餅圖</h1>
+                    <div class="card-body d-flex justify-content-center">
+                        <canvas id="ex07"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 ">
+                <div class="card ">
+                    <h1 class="card-title text-center bg-secondary">每日上課時數折線圖</h1>
+                    <div class="card-body d-flex justify-content-center">
+                        <canvas id="ex08"></canvas>
+                    </div>
+                </div>
+                <div class="card mt-4">
+                    <h1 class="card-title text-center bg-info">每日在校時數長條圖</h1>
+                    <div class="card-body d-flex justify-content-center">
+                        <canvas id="ex09"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    `;
+}
+
 switch (role) {
   case 'normal':
     const normalnavbar=document.getElementById("normalnavbar");
@@ -47,6 +136,15 @@ switch (role) {
     let usernamerender = renderheader({ usname: username });
     header.insertAdjacentHTML('beforeend', usernamerender);
     
+    const viewabsentcard=document.getElementById("viewabsentcard");
+    viewabsentcard.classList.add("row", "text-center", "mb-4",  "mt-4");
+    const viewabsentcardcontent=renderviewcard();
+    viewabsentcard.insertAdjacentHTML('beforeend',viewabsentcardcontent);
+
+    const viewchart=document.getElementById("viewchart");
+    viewchart.classList.add("container-fluid");
+    const viewchartcontent=renderthreechart();
+    viewchart.insertAdjacentHTML("beforeend",viewchartcontent);
 
     async function attendance_log(username) {
         try {
