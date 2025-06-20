@@ -11,12 +11,43 @@ function renderheader({ usname }) {
     <p class="lead mt-2">每日出勤一目了然</p>
   `;
 } 
-
+/* 一般使用者儀錶板 */
+function rendernav(){
+    return`<div class="container-fluid">
+            <a class="navbar-brand" href="#">出缺席儀錶板</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
+                aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarScroll">
+                <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+                    <li class="nav-item ">
+                        <button id="logout" class="btn btn-danger " >登出</button>
+                    </li>
+    
+                    <li class="nav-item">
+                        <button id="logout" class="btn btn-dark ">出缺席紀錄</button>
+                    </li>
+                    
+                </ul>
+                
+            </div>
+        </div>`;
+}
 switch (role) {
   case 'normal':
+    const normalnavbar=document.getElementById("normalnavbar");
+    normalnavbar.classList.add("bg-secondary" ,"navbar" ,"navbar-expand-lg");
+    const normalnavbarinsert=rendernav();
+    normalnavbar.insertAdjacentHTML('beforeend',normalnavbarinsert);
+
+    
+    const header = document.getElementById("header");
+    header.classList.add("bg-secondary","container-fluid" , "py-5" ,"shadow"  ,"text-center","header");
     let usernamerender = renderheader({ usname: username });
-    const header = document.querySelector(".header");
     header.insertAdjacentHTML('beforeend', usernamerender);
+    
+
     async function attendance_log(username) {
         try {
             const res = await fetch("/attendance_and_absence_system/attendance.php",{
