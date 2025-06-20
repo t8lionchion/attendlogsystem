@@ -26,9 +26,11 @@ function rendernav(){
                     </li>
     
                     <li class="nav-item">
-                        <button id="viewRecord" class="btn btn-dark ">出缺席紀錄</button>
+                        <a href="dashboard.html" id="viewRecord" class="btn btn-dark ">出缺席紀錄</a>
                     </li>
-                    
+                    <li class="nav-item">
+                        <a href="Punch_record.html" id="Punch_record" class="btn btn-success ">打卡紀錄</a>
+                    </li>
                 </ul>
                 
             </div>
@@ -347,6 +349,8 @@ switch (role) {
     }
 
     fetchDataAndCreateScatter(username);
+    
+
     break;
   case 'manager':
     // 這邊可自行處理
