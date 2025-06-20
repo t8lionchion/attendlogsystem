@@ -7,49 +7,73 @@ console.log(role);
 
 function renderheader({ usname }) {
   return `
-    <nav>
-      <ul class="row">
-        <li class="col-lg-2" style="list-style-type:none">
-          <button id="logout" class="btn btn-danger">登出</button>
-        </li>
-      </ul>
-    </nav>
     <h1 class="display-4 fw-bold mb-0">${usname} 的出缺席記錄</h1>
     <p class="lead mt-2">每日出勤一目了然</p>
   `;
-}
+} 
 
 switch (role) {
   case 'normal':
     let usernamerender = renderheader({ usname: username });
     const header = document.querySelector(".header");
     header.insertAdjacentHTML('beforeend', usernamerender);
-    async function attendance_log() {
+    async function attendance_log(username) {
         try {
-            const res = await fetch("attendance_log.json");
-            if (!res) {
+            const res = await fetch("/attendance_and_absence_system/attendance.php",{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({
+                username:username,
+                })
+            })
+            if (!res.ok ) {
                 throw new Error("找不到"+username+"的出席資料");
             }
             const attendance = await res.json();
-            const attend = attendance["data"][0];
-            document.querySelector('[data-attend="ex1"]').innerText = attend["總課程時數"] + "小時";
-            document.querySelector('[data-attend="ex2"]').innerText = attend["實際上課時數"] + "小時";
-            document.querySelector('[data-attend="ex3"]').innerText = attend["缺席時數"] + "小時";
-            document.querySelector('[data-attend="ex4"]').innerText = attend["遲到時間"] + "小時";
-            document.querySelector('[data-attend="ex5"]').innerText = attend["早退時數"] + "小時";
-            document.querySelector('[data-attend="ex6"]').innerText = attend["出勤比率"]  ;
+            if(attendance["status"]=='fail'){
+                throw new Error(`無此人`);
+            }
+            const attendData = attendance["data"];
 
+            if (!attendData || attendData.length === 0) {
+                throw new Error(`${username} 沒有出席資料`);
+            }
+
+            
+                document.querySelector('[data-attend="ex1"]').innerText = attendData["總課程時數"] + "小時";
+                document.querySelector('[data-attend="ex2"]').innerText = attendData["實際上課時數"] + "小時";
+                document.querySelector('[data-attend="ex3"]').innerText = attendData["缺席時數"] + "小時";
+                document.querySelector('[data-attend="ex4"]').innerText = attendData["遲到時間"] + "小時";
+                document.querySelector('[data-attend="ex5"]').innerText = attendData["早退時數"] + "小時";
+                document.querySelector('[data-attend="ex6"]').innerText = attendData["出勤比率"] +"%" ;
+        
         } catch (error) {
             console.error('載入資料失敗:', error);
         }
     };
-    attendance_log();
+    attendance_log(username);
     const ex07 = document.getElementById("ex07");
-    async function fetchDataWithAxiosAndCreateChart() {
+    async function fetchDataWithAxiosAndCreateChart(username) {
         try {
-            const res = await fetch("attendance_log.json");
+            const res = await fetch("/attendance_and_absence_system/attendance.php",{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({
+                username:username,
+                })
+            });
+            if (!res.ok ) {
+                throw new Error("找不到"+username+"的出席資料");
+            }
             const attendance = await res.json();
-            const attend2 = attendance["data"][0];
+            if(attendance["status"]=='fail'){
+                throw new Error(`無此人`);
+            }
+            const attend2 = attendance["data"];
 
             const Absence = [];
             Absence.push(attend2["實際上課時數"]);
@@ -79,12 +103,20 @@ switch (role) {
             alert('無法載入圖表資料，請檢查網路或檔案路徑！');
         }
     }
-    fetchDataWithAxiosAndCreateChart();
+    fetchDataWithAxiosAndCreateChart(username);
     const ex08 = document.getElementById("ex08");
-    async function fetchDataAndCreateChart() {
+    async function fetchDataAndCreateChart(username) {
         try {
             // 假設 data.json 檔案與你的 index.html 在同一層目錄
-            const response = await fetch("attendance_log2.json");
+            const response = await fetch("/attendance_and_absence_system/attendance_log2.php",{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({
+                username:username,
+                })
+            });
 
             if (!response.ok) { // 檢查響應是否成功 (例如 HTTP 狀態碼 200)
                 throw new Error(`HTTP 錯誤! 狀態: ${response.status}`);
@@ -130,12 +162,20 @@ switch (role) {
     }
 
     // 頁面載入時自動執行載入資料並創建圖表的函數
-    fetchDataAndCreateChart();
+    fetchDataAndCreateChart(username);
 
     const ex09 = document.getElementById("ex09");
-    async function fetchDataAndCreateScatter() {
+    async function fetchDataAndCreateScatter(username) {
         try {
-            const response = await fetch("attendclasstime.json");
+            const response = await fetch("/attendance_and_absence_system/attendclasstime.php",{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({
+                username:username,
+                })
+            });
             if (!response.ok) {
                 throw new Error(`HTTP 錯誤! 狀態: ${response.status}`);
             }
@@ -177,7 +217,7 @@ switch (role) {
         }
     }
 
-    fetchDataAndCreateScatter();
+    fetchDataAndCreateScatter(username);
     break;
   case 'manager':
     // 這邊可自行處理
