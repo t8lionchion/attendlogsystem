@@ -23,8 +23,8 @@ function rendernav(){
             </button>
             <div class="collapse navbar-collapse" id="navbarScroll">
                 <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
-                    <li class="nav-item ">
-                        <button id="logout" class="btn btn-danger " >登出</button>
+                    <li class="nav-item">
+                        <a href="home.html" id="viewRecord" class="btn btn-primary ">home</a>
                     </li>
     
                     <li class="nav-item">
@@ -32,6 +32,9 @@ function rendernav(){
                     </li>
                     <li class="nav-item">
                         <a href="Punch_record.html" id="Punch_record" class="btn btn-success ">打卡紀錄</a>
+                    </li>
+                    <li class="nav-item ">
+                        <button id="logout" class="btn btn-danger " >登出</button>
                     </li>
                 </ul>
                 

@@ -21,7 +21,7 @@ submitLoginbtn.addEventListener('click',async()=>{
     };
 
     localStorage.setItem("content",JSON.stringify(content));
-    window.location.href='dashboard.html';
+    window.location.href='home.html';
 })
 
 async function submitLogin(acc,pwd) {
