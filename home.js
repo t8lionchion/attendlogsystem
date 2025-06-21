@@ -41,7 +41,86 @@ function rendernav() {
             </div>
         </div>`;
 }
+/* 一般使用者的home卡片 */
+function renderhomecards(){
+    return`
+    <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-4 col-lg-3 mt-3">
+                    <div class="card shadow rounded">
+                        <div class="card-body">
+                            <h6 class="card-title text-muted ">總課程時數</h6>
+                            <h3 data-attend="1" class="text-primary"></h3>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="col-md-4 col-lg-3 mt-3">
+                    <div class="card shadow rounded">
+                        <div class="card-body">
+                            <h6 class="card-title text-muted ">總課程數</h6>
+                            <h3 data-attend="2" class="text-success"></h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-3 mt-3">
+                    <div class="card shadow rounded">
+                        <div class="card-body">
+                            <h6 class="card-title text-muted ">課程總天數</h6>
+                            <h3 data-attend="3" class="text-danger"></h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-3 mt-3">
+                    <div class="card shadow rounded">
+                        <div class="card-body">
+                            <h6 class="card-title text-muted ">總出席率</h6>
+                            <h3 data-attend="4" class="text-warning"></h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-3 mt-3">
+                    <div class="card shadow rounded">
+                        <div class="card-body">
+                            <h6 class="card-title text-muted">總遲到率</h6>
+                            <h3 data-attend="5" class="text-warning"></h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-3 mt-3">
+                    <div class="card shadow rounded">
+                        <div class="card-body">
+                            <h6 class="card-title text-muted ">總早退率</h6>
+                            <h3 data-attend="6" class="text-info"></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3 mt-3">
+                    <div class="card shadow rounded">
+                        <div class="card-body">
+                            <h6 class="card-title text-muted ">平均到校時數</h6>
+                            <h3 data-attend="7" class="text-primary"></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4 d-flex justify-content-center">
+                <div class="col-9">
+                    <div class="card shadow rounded">
+                        <h3 class="card-title text-center">全課程完成率</h3>
+                        <div class="card-body">
+                            <canvas id="HomeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>        
+    `;
+}
 switch (role) {
     case 'normal':
         const normalnavbar = document.getElementById("normalnavbar");
@@ -54,6 +133,10 @@ switch (role) {
         header.classList.add("bg-secondary", "container-fluid", "py-5", "shadow", "text-center", "header");
         let usernamerender = renderheader({ usname: username });
         header.insertAdjacentHTML('beforeend', usernamerender);
+
+        const main=document.getElementById("main");
+        let rendermaincontent=renderhomecards();
+        main.insertAdjacentHTML('beforeend',rendermaincontent);
 
         async function home_log(username) {
             try {
