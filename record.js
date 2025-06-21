@@ -191,8 +191,9 @@ async function RecordTableBodyAPI(username) {
             }
 
         };
-    
-/* 企業管理者的功能 */    
+
+
+ 
 // 全域變數，記錄目前選取的學生資料
 let currentData = [];
 let currentStudent = '';
@@ -254,16 +255,16 @@ async function renderMenu() {
             item.addEventListener('click', async () => {
                 selectstudentbtn.innerText = item.innerText;
 
-                // 🔥 更新目前選取的學生
+                //  更新目前選取的學生
                 currentStudent = item.innerText;
 
-                // 🔥 取得該學生的打卡資料並渲染
+                //  取得該學生的打卡資料並渲染
                 currentData = await managerRecordTableBodyAPI(currentStudent);
                 renderTable(currentData);
             });
         });
 
-        // 🔥 搜尋功能：只綁一次就好
+        //  搜尋功能：只綁一次就好
         const searchbutton = document.getElementById("searchButton");
         searchbutton.addEventListener("click", () => {
             if (currentData.length === 0) {
@@ -290,7 +291,7 @@ async function renderMenu() {
                 return;
             }
 
-            renderTable(filterData); // 🔥 顯示篩選結果
+            renderTable(filterData); //  顯示篩選結果
         });
 
     } catch (error) {
@@ -377,6 +378,9 @@ switch (role) {
         managerrecordtable.classList.add("container-fluid", "mt-4");
         let managerrecordtableContent = RenderTable();
         managerrecordtable.insertAdjacentHTML("beforeend", managerrecordtableContent);
+        
+
+        
         
         renderMenu();
 

@@ -161,7 +161,7 @@ function managerrenderhomecards() {
             <div class="dropdown d-flex justify-content-center">
                 <button id="selectstudentbtn" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
                     aria-expanded="false">
-                    請選取學生
+                    Ray
                 </button>
                 <ul id="dropdown-menu" class="dropdown-menu scrollable-menu">
                     
@@ -429,7 +429,10 @@ switch (role) {
         managermain.insertAdjacentHTML('beforeend', managerrendermaincontent);
 
 
+        home_log('Ray');
 
+
+        renderhomechartdata('Ray');
         renderMenu();
 
 
@@ -451,6 +454,11 @@ switch (role) {
         const adminmain = document.getElementById("main");
         let adminrendermaincontent = managerrenderhomecards();
         adminmain.insertAdjacentHTML('beforeend', adminrendermaincontent);
+
+        home_log('Ray');
+
+
+        renderhomechartdata('Ray');
 
         renderMenu();
         

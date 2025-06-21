@@ -117,7 +117,7 @@ function rendermenubody() {
             <div class="dropdown d-flex justify-content-center">
                 <button id="selectstudentbtn" class="btn btn-secondary dropdown-toggle" type="button"
                     data-bs-toggle="dropdown" aria-expanded="false">
-                    請選取學生
+                    Ray
                 </button>
                 <ul id="dropdown-menu" class="dropdown-menu scrollable-menu">
 
@@ -466,6 +466,14 @@ switch (role) {
         console.log(managermenucontent);
         managermenu.insertAdjacentHTML("beforeend", managermenucontent);
 
+        attendance_log('Ray');
+
+        fetchDataWithAxiosAndCreateChart('Ray');
+        // 頁面載入時自動執行載入資料並創建圖表的函數
+        fetchDataAndCreateChart('Ray');
+
+        fetchDataAndCreateScatter('Ray');
+
 
         renderMenu();
 
@@ -497,6 +505,14 @@ switch (role) {
         let adminimenucontent = rendermenubody();
         
         adminimenu.insertAdjacentHTML("beforeend", adminimenucontent);
+
+        attendance_log('Ray');
+
+        fetchDataWithAxiosAndCreateChart('Ray');
+        // 頁面載入時自動執行載入資料並創建圖表的函數
+        fetchDataAndCreateChart('Ray');
+
+        fetchDataAndCreateScatter('Ray');
 
         renderMenu();
         break;
