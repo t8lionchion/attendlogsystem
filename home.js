@@ -130,7 +130,7 @@ function managerrenderhomecards() {
             <div class="dropdown d-flex justify-content-center">
                 <button id="selectstudentbtn" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
                     aria-expanded="false">
-                    
+                    請選取學生
                 </button>
                 <ul id="dropdown-menu" class="dropdown-menu scrollable-menu">
                     
