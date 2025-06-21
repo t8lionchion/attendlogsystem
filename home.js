@@ -130,7 +130,7 @@ function managerrenderhomecards() {
             <div class="dropdown d-flex justify-content-center">
                 <button id="selectstudentbtn" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
                     aria-expanded="false">
-                    請選取學生
+                    
                 </button>
                 <ul id="dropdown-menu" class="dropdown-menu scrollable-menu">
                     
@@ -405,7 +405,23 @@ switch (role) {
 
 
         break;
-    case 'administrator':
-        // 這邊可自行處理
+    case 'system_administrator':
+        const adminnavbar = document.getElementById("managernavbar");
+        adminnavbar.classList.add("bg-secondary", "navbar", "navbar-expand-lg");
+        const adminnavbarinsert = rendernav();
+        adminnavbar.insertAdjacentHTML('beforeend',adminnavbarinsert);
+
+
+        const adminheader = document.getElementById("header");
+        adminheader.classList.add("bg-secondary", "container-fluid", "py-5", "shadow", "text-center", "header");
+        let adminRender = renderheader({ usname: username });
+        adminheader.insertAdjacentHTML('beforeend', adminRender);
+
+        const adminmain = document.getElementById("main");
+        let adminrendermaincontent = managerrenderhomecards();
+        adminmain.insertAdjacentHTML('beforeend', adminrendermaincontent);
+
+        renderMenu();
+        
         break;
 }

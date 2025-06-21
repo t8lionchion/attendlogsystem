@@ -299,9 +299,6 @@ async function renderMenu() {
 }
 
 
-
-
-
 switch (role) {
     case 'normal':
         const normalnavbar = document.getElementById("normalnavbar");
@@ -358,7 +355,30 @@ switch (role) {
         
 
         break;
-    case 'administrator':
-        // 這邊可自行處理
+    case 'system_administrator':
+        const adminnavbar = document.getElementById("normalnavbar");
+        adminnavbar.classList.add("bg-secondary", "navbar", "navbar-expand-lg");
+        const adminnavbarinsert = rendernav();
+        adminnavbar.insertAdjacentHTML('beforeend', adminnavbarinsert);
+
+
+        const adminheader = document.getElementById("header");
+        adminheader.classList.add("bg-secondary", "container-fluid", "py-5", "shadow", "text-center", "header");
+        let adminrender = renderheader({ usname: username });
+        adminheader.insertAdjacentHTML('beforeend', adminrender);
+
+        const adminSearchdate=document.getElementById("managerSearchDate");
+        
+        let adminSearchdatecontent=rendermanagerdate();
+        
+        adminSearchdate.insertAdjacentHTML('beforeend',adminSearchdatecontent);
+
+        const adminrecordtable = document.getElementById("recordtable");
+        adminrecordtable.classList.add("container-fluid", "mt-4");
+        let adminrecordtableContent = RenderTable();
+        adminrecordtable.insertAdjacentHTML("beforeend", adminrecordtableContent);
+        
+        renderMenu();
+        
         break;
 }
