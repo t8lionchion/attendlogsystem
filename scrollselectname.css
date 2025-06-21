@@ -1,0 +1,4 @@
+.scrollable-menu {
+        max-height: 250px; /* 可自行調整，建議設到剛好顯示10筆資料 */
+        overflow-y: auto;
+}

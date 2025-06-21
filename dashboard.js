@@ -5,6 +5,10 @@ let role = result.role;
 console.log(username);
 console.log(role);
 
+let myChart=null;
+let my2Chart=null;
+let my3Chart=null;
+
 function renderheader({ usname }) {
   return `
     <h1 class="display-4 fw-bold mb-0">${usname} 的出缺席記錄</h1>
@@ -17,6 +21,7 @@ function rendernav(){
 }
 /* 一般使用者出缺席卡片 */
 function renderviewcard(){
+
     return`
     <div class="col-md-4 col-lg-2">
             <div class="card shadow rounded">
@@ -73,6 +78,7 @@ function renderviewcard(){
         </div>
     `;
 }
+
 /* 一般使用者的3張圖表 */
 function renderthreechart(){
     return`
@@ -104,30 +110,31 @@ function renderthreechart(){
     `;
 }
 
-switch (role) {
-  case 'normal':
-    const normalnavbar=document.getElementById("normalnavbar");
-    normalnavbar.classList.add("bg-secondary" ,"navbar" ,"navbar-expand-lg");
-    const normalnavbarinsert=rendernav({usname: username});
-    normalnavbar.insertAdjacentHTML('beforeend',normalnavbarinsert);
+/* 下拉式選單主體 */
+function rendermenubody(){
+    return`
+        <div class="row mt-3 mb-3">
+            <div class="dropdown d-flex justify-content-center">
+                <button id="selectstudentbtn" class="btn btn-secondary dropdown-toggle" type="button"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    請選取學生
+                </button>
+                <ul id="dropdown-menu" class="dropdown-menu scrollable-menu">
 
-    
-    const header = document.getElementById("header");
-    header.classList.add("bg-secondary","container-fluid" , "py-5" ,"shadow"  ,"text-center","header");
-    let usernamerender = renderheader({ usname: username });
-    header.insertAdjacentHTML('beforeend', usernamerender);
-    
-    const viewabsentcard=document.getElementById("viewabsentcard");
-    viewabsentcard.classList.add("row", "text-center", "mb-4",  "mt-4");
-    const viewabsentcardcontent=renderviewcard();
-    viewabsentcard.insertAdjacentHTML('beforeend',viewabsentcardcontent);
+                </ul>
+            </div>
+        </div>
+    `;
+}
 
-    const viewchart=document.getElementById("viewchart");
-    viewchart.classList.add("container-fluid");
-    const viewchartcontent=renderthreechart();
-    viewchart.insertAdjacentHTML("beforeend",viewchartcontent);
+/* 下拉式選單的模板 */
+function renderdropdownMenu({ acc }) {
+    return `
+    <li><a class="dropdown-item" href="#">${acc}</a></li>
+    `;
+}
 
-    async function attendance_log(username) {
+async function attendance_log(username) {
         try {
             const res = await fetch("/attendance_and_absence_system/attendance.php",{
                 method:'POST',
@@ -163,9 +170,7 @@ switch (role) {
             console.error('載入資料失敗:', error);
         }
     };
-    attendance_log(username);
-    const ex07 = document.getElementById("ex07");
-    async function fetchDataWithAxiosAndCreateChart(username) {
+async function fetchDataWithAxiosAndCreateChart(username) {
         try {
             const res = await fetch("/attendance_and_absence_system/attendance.php",{
                 method:'POST',
@@ -189,6 +194,11 @@ switch (role) {
             Absence.push(attend2["實際上課時數"]);
             Absence.push(attend2["缺席時數"]);
 
+            const ex07 = document.getElementById("ex07");
+
+            if (myChart !== null) {
+                myChart.destroy();
+            }
 
             myChart = new Chart(ex07, {
                 type: 'pie',
@@ -213,9 +223,8 @@ switch (role) {
             alert('無法載入圖表資料，請檢查網路或檔案路徑！');
         }
     }
-    fetchDataWithAxiosAndCreateChart(username);
-    const ex08 = document.getElementById("ex08");
-    async function fetchDataAndCreateChart(username) {
+
+async function fetchDataAndCreateChart(username) {
         try {
             // 假設 data.json 檔案與你的 index.html 在同一層目錄
             const response = await fetch("/attendance_and_absence_system/attendance_log2.php",{
@@ -239,9 +248,14 @@ switch (role) {
 
             const attended_hours = rawData.data.map(item => item.attended_hours);
 
-
+            const ex08 = document.getElementById("ex08");
             // 創建 Chart.js 圖表
-            myChart = new Chart(ex08, {
+
+            if (my2Chart !== null) {
+                my2Chart.destroy();
+            }
+
+            my2Chart = new Chart(ex08, {
                 type: 'line',
                 data: {
                     labels: class_date,
@@ -270,12 +284,7 @@ switch (role) {
             alert('無法載入圖表資料，請檢查網路或檔案路徑！');
         }
     }
-
-    // 頁面載入時自動執行載入資料並創建圖表的函數
-    fetchDataAndCreateChart(username);
-
-    const ex09 = document.getElementById("ex09");
-    async function fetchDataAndCreateScatter(username) {
+async function fetchDataAndCreateScatter(username) {
         try {
             const response = await fetch("/attendance_and_absence_system/attendclasstime.php",{
                 method:'POST',
@@ -296,8 +305,13 @@ switch (role) {
                 x: item.class_date,
                 y: parseFloat(item.raw_hours)
             }));
+            const ex09 = document.getElementById("ex09");
 
-            const barChart = new Chart(ex09, {
+            if (my3Chart !== null) {
+                my3Chart.destroy();
+            }
+
+            my3Chart = new Chart(ex09, {
                 type: 'bar',
                 data: {
                     datasets: [{
@@ -329,12 +343,101 @@ switch (role) {
         }
     }
 
+async function renderMenu() {
+    try {
+        const result = await fetch('/attendance_and_absence_system/selectallname.php');
+        const data = await result.json();
+        const dropdownmenu = document.getElementById("dropdown-menu");
+        const selectstudentbtn = document.getElementById("selectstudentbtn");
+        
+
+        let totalHTML = '';
+        for (let i = 0; i < data['data'].length; i++) {
+            totalHTML += renderdropdownMenu({ acc: data['data'][i]['acc'] });
+        }
+        dropdownmenu.innerHTML = totalHTML;
+
+
+        const dropdown_items = document.querySelectorAll(".dropdown-item");
+
+        dropdown_items.forEach(item => {
+            item.addEventListener('click', () => {
+                selectstudentbtn.innerText = item.innerText;
+                attendance_log(item.innerText);
+                fetchDataWithAxiosAndCreateChart(item.innerText);
+                fetchDataAndCreateChart(item.innerText);
+                fetchDataAndCreateScatter(item.innerText);  
+            });
+        });
+
+    } catch (error) {
+        console.log('資料讀取失敗', error);
+    }
+}
+
+switch (role) {
+  case 'normal':
+    const normalnavbar=document.getElementById("normalnavbar");
+    normalnavbar.classList.add("bg-secondary" ,"navbar" ,"navbar-expand-lg");
+    const normalnavbarinsert=rendernav();
+    normalnavbar.insertAdjacentHTML('beforeend',normalnavbarinsert);
+
+    
+    const header = document.getElementById("header");
+    header.classList.add("bg-secondary","container-fluid" , "py-5" ,"shadow"  ,"text-center","header");
+    let usernamerender = renderheader({ usname: username });
+    header.insertAdjacentHTML('beforeend', usernamerender);
+    
+    const viewabsentcard=document.getElementById("viewabsentcard");
+    viewabsentcard.classList.add("row", "text-center", "mb-4",  "mt-4");
+    const viewabsentcardcontent=renderviewcard();
+    viewabsentcard.insertAdjacentHTML('beforeend',viewabsentcardcontent);
+
+    const viewchart=document.getElementById("viewchart");
+    viewchart.classList.add("container-fluid");
+    const viewchartcontent=renderthreechart();
+    viewchart.insertAdjacentHTML("beforeend",viewchartcontent);
+
+    attendance_log(username);
+    
+    fetchDataWithAxiosAndCreateChart(username);
+    // 頁面載入時自動執行載入資料並創建圖表的函數
+    fetchDataAndCreateChart(username);
+
     fetchDataAndCreateScatter(username);
     
-
     break;
   case 'manager':
-    // 這邊可自行處理
+    const managernavbar=document.getElementById("managernavbar");
+    managernavbar.classList.add("bg-secondary" ,"navbar" ,"navbar-expand-lg");
+    const managernavbarinsert=rendernav();
+    managernavbar.insertAdjacentHTML('beforeend',managernavbarinsert);
+
+    
+    const managerheader = document.getElementById("header");
+    managerheader.classList.add("bg-secondary","container-fluid" , "py-5" ,"shadow"  ,"text-center","header");
+    let managerheaderrender = renderheader({ usname: username });
+    managerheader.insertAdjacentHTML('beforeend', managerheaderrender);
+
+    const managerviewabsentcard=document.getElementById("viewabsentcard");
+    managerviewabsentcard.classList.add("row", "text-center", "mb-4",  "mt-4");
+    const managerviewabsentcardcontent=renderviewcard();
+    managerviewabsentcard.insertAdjacentHTML('beforeend',managerviewabsentcardcontent);
+
+    const managerviewchart=document.getElementById("viewchart");
+    managerviewchart.classList.add("container-fluid");
+    const managerviewchartcontent=renderthreechart();
+    managerviewchart.insertAdjacentHTML("beforeend",managerviewchartcontent);
+
+    const managermenu=document.getElementById('managermenu');
+    
+    let managermenucontent=rendermenubody();
+    console.log(managermenucontent);
+    managermenu.insertAdjacentHTML("beforeend",managermenucontent);
+
+
+    renderMenu();
+    
     break;
   case 'administrator':
     // 這邊可自行處理

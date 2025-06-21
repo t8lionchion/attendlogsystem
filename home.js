@@ -4,7 +4,7 @@ let username = result.username;
 let role = result.role;
 console.log(username);
 console.log(role);
-
+let barChart = null; // 🔥 全域變數
 /* 一般使用者的打卡紀錄模板 */
 function renderheader({ usname }) {
     return `
@@ -12,6 +12,7 @@ function renderheader({ usname }) {
     <p class="lead mt-2">每日出勤一目了然</p>
   `;
 }
+/*  */
 
 /* 一般使用者儀錶板 */
 function rendernav() {
@@ -42,8 +43,8 @@ function rendernav() {
         </div>`;
 }
 /* 一般使用者的home卡片 */
-function renderhomecards(){
-    return`
+function renderhomecards() {
+    return `
     <div class="container-fluid">
             <div class="row">
                 <div class="col-md-4 col-lg-3 mt-3">
@@ -121,6 +122,241 @@ function renderhomecards(){
         </div>        
     `;
 }
+/* 企業管理者的home卡片 */
+function managerrenderhomecards() {
+    return `
+    <div class="container-fluid">
+            <div class="row mt-3 mb-3">
+            <div class="dropdown d-flex justify-content-center">
+                <button id="selectstudentbtn" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    請選取學生
+                </button>
+                <ul id="dropdown-menu" class="dropdown-menu scrollable-menu">
+                    
+                </ul>
+            </div>
+        </div>
+            <div class="row">
+                <div class="col-md-4 col-lg-3 mt-3">
+                    <div class="card shadow rounded">
+                        <div class="card-body">
+                            <h6 class="card-title text-muted ">總課程時數</h6>
+                            <h3 data-attend="1" class="text-primary"></h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-3 mt-3">
+                    <div class="card shadow rounded">
+                        <div class="card-body">
+                            <h6 class="card-title text-muted ">總課程數</h6>
+                            <h3 data-attend="2" class="text-success"></h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-3 mt-3">
+                    <div class="card shadow rounded">
+                        <div class="card-body">
+                            <h6 class="card-title text-muted ">課程總天數</h6>
+                            <h3 data-attend="3" class="text-danger"></h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-3 mt-3">
+                    <div class="card shadow rounded">
+                        <div class="card-body">
+                            <h6 class="card-title text-muted ">總出席率</h6>
+                            <h3 data-attend="4" class="text-warning"></h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-3 mt-3">
+                    <div class="card shadow rounded">
+                        <div class="card-body">
+                            <h6 class="card-title text-muted">總遲到率</h6>
+                            <h3 data-attend="5" class="text-warning"></h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-3 mt-3">
+                    <div class="card shadow rounded">
+                        <div class="card-body">
+                            <h6 class="card-title text-muted ">總早退率</h6>
+                            <h3 data-attend="6" class="text-info"></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3 mt-3">
+                    <div class="card shadow rounded">
+                        <div class="card-body">
+                            <h6 class="card-title text-muted ">平均到校時數</h6>
+                            <h3 data-attend="7" class="text-primary"></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4 d-flex justify-content-center">
+                <div class="col-9">
+                    <div class="card shadow rounded">
+                        <h3 class="card-title text-center">全課程完成率</h3>
+                        <div class="card-body">
+                            <canvas id="HomeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>        
+    `;
+}
+
+/* 下拉式選單的模板 */
+function renderdropdownMenu({ acc }) {
+    return `
+    <li><a class="dropdown-item" href="#">${acc}</a></li>
+    `;
+}
+async function renderhomechartdata(username) {
+    try {
+        const response = await fetch("/attendance_and_absence_system/homechart.php", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP 錯誤! 狀態: ${response.status}`);
+        }
+
+        const rawData = await response.json();
+
+        const labels = rawData.data.map(item => item['課程名稱']);
+        const dataSet = rawData.data.map(item =>
+            parseFloat(item['出席率百分比'],));
+        const totalhours = rawData.data.map(item => item['課程總時數']);
+        const attendhours = rawData.data.map(item => item['出席時數']);
+        const HomeChart = document.getElementById("HomeChart");
+        if (barChart !== null) {
+            barChart.destroy();
+        }
+        barChart = new Chart(HomeChart, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '課程出席率',
+                    data: dataSet,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                }]
+            },
+            options: {
+                scales: {
+
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: '課程完成率(%)' }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                const i = context.dataIndex;
+                                return [
+                                    `課程名稱: ${labels[i]}`,
+                                    `出席率: ${dataSet[i]}%`,
+                                    `總時數: ${totalhours[i]} 小時`,
+                                    `出席時數: ${attendhours[i]} 小時`
+                                ];
+                            }
+                        }
+                    }
+                }
+
+            }
+        });
+
+    } catch (error) {
+        console.error('載入資料失敗:', error);
+        alert('無法載入圖表資料，請檢查網路或檔案路徑！');
+    }
+}
+
+async function home_log(username) {
+    try {
+        const res = await fetch("/attendance_and_absence_system/home.php", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+            })
+        })
+        if (!res.ok) {
+            throw new Error("找不到" + username + "的課程資料");
+        }
+        const attendance = await res.json();
+        if (attendance["status"] == 'fail') {
+            throw new Error(`無此人`);
+        }
+        const attendData = attendance["data"];
+        console.log(attendData);
+        if (!attendData || attendData.length === 0) {
+            throw new Error(`${username} 沒有資料`);
+        }
+
+
+        document.querySelector('[data-attend="1"]').innerText = attendData[0]["總課程時數"] + "小時";
+        document.querySelector('[data-attend="2"]').innerText = attendData[0]["總課程數"] + "個";
+        document.querySelector('[data-attend="3"]').innerText = attendData[0]["總天數"] + "天";
+        document.querySelector('[data-attend="4"]').innerText = (attendData[0]["總出席率"] * 100).toFixed(2) + "%";
+        document.querySelector('[data-attend="5"]').innerText = (attendData[0]["總遲到率"] * 100).toFixed(2) + "%";
+        document.querySelector('[data-attend="6"]').innerText = (attendData[0]["總早退率"] * 100).toFixed(2) + "%";
+        document.querySelector('[data-attend="7"]').innerText = (attendData[0]["平均到校時數"]).toFixed(2) + "小時";
+    } catch (error) {
+        console.error('載入資料失敗:', error);
+    }
+};
+async function renderMenu() {
+    try {
+        const result = await fetch('/attendance_and_absence_system/selectallname.php');
+        const data = await result.json();
+        const dropdownmenu = document.getElementById("dropdown-menu");
+        const selectstudentbtn = document.getElementById("selectstudentbtn");
+        console.log(data);
+
+        let totalHTML = '';
+        for (let i = 0; i < data['data'].length; i++) {
+            totalHTML += renderdropdownMenu({ acc: data['data'][i]['acc'] });
+        }
+        dropdownmenu.innerHTML = totalHTML;
+
+
+        const dropdown_items = document.querySelectorAll(".dropdown-item");
+
+        dropdown_items.forEach(item => {
+            item.addEventListener('click', () => {
+                selectstudentbtn.innerText = item.innerText;
+
+                renderhomechartdata(item.innerText);
+                home_log(item.innerText);
+            });
+        });
+
+    } catch (error) {
+        console.log('資料讀取失敗', error);
+    }
+}
+
+
 switch (role) {
     case 'normal':
         const normalnavbar = document.getElementById("normalnavbar");
@@ -134,119 +370,40 @@ switch (role) {
         let usernamerender = renderheader({ usname: username });
         header.insertAdjacentHTML('beforeend', usernamerender);
 
-        const main=document.getElementById("main");
-        let rendermaincontent=renderhomecards();
-        main.insertAdjacentHTML('beforeend',rendermaincontent);
-
-        async function home_log(username) {
-            try {
-                const res = await fetch("/attendance_and_absence_system/home.php", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        username: username,
-                    })
-                })
-                if (!res.ok) {
-                    throw new Error("找不到" + username + "的課程資料");
-                }
-                const attendance = await res.json();
-                if (attendance["status"] == 'fail') {
-                    throw new Error(`無此人`);
-                }
-                const attendData = attendance["data"];
-                console.log(attendData);
-                if (!attendData || attendData.length === 0) {
-                    throw new Error(`${username} 沒有資料`);
-                }
+        const main = document.getElementById("main");
+        let rendermaincontent = renderhomecards();
+        main.insertAdjacentHTML('beforeend', rendermaincontent);
 
 
-                document.querySelector('[data-attend="1"]').innerText = attendData[0]["總課程時數"] + "小時";
-                document.querySelector('[data-attend="2"]').innerText = attendData[0]["總課程數"] + "個";
-                document.querySelector('[data-attend="3"]').innerText = attendData[0]["總天數"] + "天";
-                document.querySelector('[data-attend="4"]').innerText = (attendData[0]["總出席率"] * 100).toFixed(2) + "%";
-                document.querySelector('[data-attend="5"]').innerText = (attendData[0]["總遲到率"] * 100).toFixed(2) + "%";
-                document.querySelector('[data-attend="6"]').innerText = (attendData[0]["總早退率"] * 100).toFixed(2) + "%";
-                document.querySelector('[data-attend="7"]').innerText = (attendData[0]["平均到校時數"]).toFixed(2) + "小時";
-            } catch (error) {
-                console.error('載入資料失敗:', error);
-            }
-        };
         home_log(username);
 
-        const HomeChart = document.getElementById("HomeChart");
-        async function renderhomechartdata(username) {
-            try {
-                const response = await fetch("/attendance_and_absence_system/homechart.php", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        username: username,
-                    })
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP 錯誤! 狀態: ${response.status}`);
-                }
-
-                const rawData = await response.json();
-
-                const labels = rawData.data.map(item => item['課程名稱']);
-                const dataSet = rawData.data.map(item =>
-                    parseFloat(item['出席率百分比'],));
-                const totalhours = rawData.data.map(item => item['課程總時數']);
-                const attendhours = rawData.data.map(item => item['出席時數']);
-
-                const barChart = new Chart(HomeChart, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: '課程出席率',
-                            data: dataSet,
-                            backgroundColor: 'rgba(54, 162, 235, 0.6)'
-                        }]
-                    },
-                    options: {
-                        scales: {
-
-                            y: {
-                                beginAtZero: true,
-                                title: { display: true, text: '課程完成率(%)' }
-                            }
-                        },
-                        plugins: {
-                            tooltip: {
-                                callbacks: {
-                                    label: function (context) {
-                                        const i = context.dataIndex;
-                                        return [
-                                            `課程名稱: ${labels[i]}`,
-                                            `出席率: ${dataSet[i]}%`,
-                                            `總時數: ${totalhours[i]} 小時`,
-                                            `出席時數: ${attendhours[i]} 小時`
-                                        ];
-                                    }
-                                }
-                            }
-                        }
-
-                    }
-                });
-
-            } catch (error) {
-                console.error('載入資料失敗:', error);
-                alert('無法載入圖表資料，請檢查網路或檔案路徑！');
-            }
-        }
 
         renderhomechartdata(username);
+
         break;
     case 'manager':
-        // 這邊可自行處理
+        const managernavbar = document.getElementById("managernavbar");
+        managernavbar.classList.add("bg-secondary", "navbar", "navbar-expand-lg");
+        const managernavbarinsert = rendernav();
+        managernavbar.insertAdjacentHTML('beforeend', managernavbarinsert);
+
+
+        const managerheader = document.getElementById("header");
+        managerheader.classList.add("bg-secondary", "container-fluid", "py-5", "shadow", "text-center", "header");
+        let managerRender = renderheader({ usname: username });
+        managerheader.insertAdjacentHTML('beforeend', managerRender);
+
+        const managermain = document.getElementById("main");
+        let managerrendermaincontent = managerrenderhomecards();
+        managermain.insertAdjacentHTML('beforeend', managerrendermaincontent);
+
+
+
+        renderMenu();
+
+
+
+
         break;
     case 'administrator':
         // 這邊可自行處理
