@@ -52,8 +52,8 @@ function rendertbody({ id, user_name, acc, role }) {
  `;
 }
 
-function renderadd(){
-    return`
+function renderadd() {
+    return `
     <h2 class="mb-4">建立使用者</h2>
         <form id="createUserForm">
             <!-- 姓名 (帳號) -->
@@ -110,7 +110,7 @@ async function viewalluser() {
             });
         }
         insertrecord.insertAdjacentHTML("beforeend", total);
-        
+
     } catch (error) {
         console.log('資料沒有傳到');
     }
@@ -174,7 +174,7 @@ addUserBtn.addEventListener("click", () => {
                 viewuser.insertAdjacentHTML("beforeend", viewusercontent);
                 viewalluser();
                 addUserBtn.classList.remove("d-none");
-                
+
             } else {
                 alert('建立失敗：' + result.message);
             }
@@ -185,8 +185,36 @@ addUserBtn.addEventListener("click", () => {
         }
     });
 
-    
+
 });
 
+document.getElementById("insertrecord").addEventListener("click", async (e) => {
+    if (e.target.closest(".delete-btn")) {
+        const btn = e.target.closest(".delete-btn");
+        const id = btn.dataset.id;
+        if (!confirm(`確定要刪除使用者 ID: ${id} 嗎？`)) return;
+
+        try {
+            const response = await fetch('/attendance_and_absence_system/delete_user.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            });
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                alert('刪除成功！');
+                // 移除該列
+                const tr = btn.closest('tr');
+                if(tr) tr.remove();
+            } else {
+                alert('刪除失敗：' + result.message);
+            }
+        } catch (error) {
+            alert('刪除時發生錯誤！');
+            console.error(error);
+        }
+    }
+});
 
 
