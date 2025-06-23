@@ -98,7 +98,7 @@ viewuser.insertAdjacentHTML("beforeend", viewusercontent);
 
 async function viewalluser() {
     try {
-        const result = await fetch('/attendance_and_absence_system/viewuser.php');
+        const result = await fetch('viewuser.php');
         const data = await result.json();
         let total = '';
         const insertrecord = document.getElementById("insertrecord");
@@ -195,7 +195,7 @@ document.getElementById("insertrecord").addEventListener("click", async (e) => {
         if (!confirm(`確定要刪除使用者 ID: ${id} 嗎？`)) return;
 
         try {
-            const response = await fetch('/attendance_and_absence_system/delete_user.php', {
+            const response = await fetch('delete_user.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id })

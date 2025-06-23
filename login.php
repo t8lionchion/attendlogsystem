@@ -9,7 +9,6 @@ $data = json_decode($rowdata, true);
 $account = $data['account'] ?? '';
 $password = $data['password'] ?? '';
 
-
 if (!$account || !$password) {
     echo json_encode(['status' => 'fail', 'message' => '帳號或密碼不可為空']);
     exit;

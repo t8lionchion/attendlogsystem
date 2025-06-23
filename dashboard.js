@@ -136,7 +136,7 @@ function renderdropdownMenu({ acc }) {
 
 async function attendance_log(username) {
     try {
-        const res = await fetch("/attendance_and_absence_system/attendance.php", {
+        const res = await fetch("attendance.php", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -172,7 +172,7 @@ async function attendance_log(username) {
 };
 async function fetchDataWithAxiosAndCreateChart(username) {
     try {
-        const res = await fetch("/attendance_and_absence_system/attendance.php", {
+        const res = await fetch("attendance.php", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -227,7 +227,7 @@ async function fetchDataWithAxiosAndCreateChart(username) {
 async function fetchDataAndCreateChart(username) {
     try {
         // 假設 data.json 檔案與你的 index.html 在同一層目錄
-        const response = await fetch("/attendance_and_absence_system/attendance_log2.php", {
+        const response = await fetch("attendance_log2.php", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -286,7 +286,7 @@ async function fetchDataAndCreateChart(username) {
 }
 async function fetchDataAndCreateScatter(username) {
     try {
-        const response = await fetch("/attendance_and_absence_system/attendclasstime.php", {
+        const response = await fetch("attendclasstime.php", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -345,7 +345,7 @@ async function fetchDataAndCreateScatter(username) {
 
 async function renderMenu() {
     try {
-        const result = await fetch('/attendance_and_absence_system/selectallname.php');
+        const result = await fetch('selectallname.php');
         const data = await result.json();
         const dropdownmenu = document.getElementById("dropdown-menu");
         const selectstudentbtn = document.getElementById("selectstudentbtn");

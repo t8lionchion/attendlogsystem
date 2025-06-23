@@ -253,7 +253,7 @@ function renderdropdownMenu({ acc }) {
 }
 async function renderhomechartdata(username) {
     try {
-        const response = await fetch("/attendance_and_absence_system/homechart.php", {
+        const response = await fetch("homechart.php", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -322,7 +322,7 @@ async function renderhomechartdata(username) {
 
 async function home_log(username) {
     try {
-        const res = await fetch("/attendance_and_absence_system/home.php", {
+        const res = await fetch("home.php", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -358,7 +358,7 @@ async function home_log(username) {
 };
 async function renderMenu() {
     try {
-        const result = await fetch('/attendance_and_absence_system/selectallname.php');
+        const result = await fetch('selectallname.php');
         const data = await result.json();
         const dropdownmenu = document.getElementById("dropdown-menu");
         const selectstudentbtn = document.getElementById("selectstudentbtn");

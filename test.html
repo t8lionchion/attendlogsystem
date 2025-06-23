@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    /* fetch('login.php',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                account: 'Ted',
+                password: 'fs101'
+            })
+        })
+  .then(res => res.json())
+  .then(data => console.log(data));
+  console.log('data'); */
+  async function submitLogin(acc, pwd) {
+    try {
+        const response = await fetch('login.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ account: acc, password: pwd })
+        });
+
+        const result = await response.json();
+        return result;
+
+    } catch (error) {
+        console.error(error);
+        return { status: 'fail' };
+    }
+}
+
+// 使用方式：
+(async () => {
+    const result = await submitLogin('Ted', 'fs101');
+    console.log(result);
+})();
+
+
+</script>
+</html>

@@ -136,7 +136,7 @@ function rendermanagerdate() {
 /* 一般使用者的功能 */
 async function RecordTableBodyAPI(username) {
             try {
-                const res = await fetch('/attendance_and_absence_system/record.php', {
+                const res = await fetch('record.php', {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -201,7 +201,7 @@ let currentStudent = '';
 // 取得學生資料的 API（只負責抓資料）
 async function managerRecordTableBodyAPI(username) {
     try {
-        const res = await fetch('/attendance_and_absence_system/record.php', {
+        const res = await fetch('record.php', {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username })
@@ -237,7 +237,7 @@ function renderTable(data) {
 // 渲染選單並綁定事件
 async function renderMenu() {
     try {
-        const result = await fetch('/attendance_and_absence_system/selectallname.php');
+        const result = await fetch('selectallname.php');
         const data = await result.json();
 
         const dropdownmenu = document.getElementById("dropdown-menu");
