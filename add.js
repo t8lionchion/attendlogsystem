@@ -146,7 +146,7 @@ addUserBtn.addEventListener("click", () => {
         }
 
         try {
-            const res = await fetch('/attendance_and_absence_system/createuser.php', {
+            const res = await fetch('createuser.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
