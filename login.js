@@ -23,7 +23,7 @@ async function submitLogin(acc, pwd) {
 const submitLoginbtn = document.getElementById('loginsubmitbtn');
 
 submitLoginbtn.addEventListener('click', async (e) => {
-    e.preventDefault(); // 防止表單 reload
+    e.preventDefault(); 
     try {
         const acc = document.getElementById("account").value;
         const pwd = document.getElementById("password").value;
