@@ -234,16 +234,13 @@ addUserBtn.addEventListener("click", () => {
 
 
 document.getElementById("insertrecord").addEventListener("click", async (e) => {
+    e.preventDefault();
     if(e.target.closest(".update-btn")){
         const ubtn=e.target.closest(".update-btn");
         const tr = ubtn.closest("tr");
-        console.log(tr);
         const id=ubtn.dataset.uid;
-        const acc = tr.querySelector('td[data-acc]').dataset.acc;
-        const role = tr.querySelector('td[data-role]').dataset.role;
-
-        console.log("acc"+acc);
-        console.log("role"+role);
+        let acc = tr.querySelector('td[data-acc]').dataset.acc;
+        let role = tr.querySelector('td[data-role]').dataset.role;
         const viewuser = document.getElementById("viewuser");
         viewuser.innerHTML = '';
         addUserBtn.classList.add("d-none");
@@ -255,6 +252,9 @@ document.getElementById("insertrecord").addEventListener("click", async (e) => {
         btn.addEventListener("click",async(e)=>{
             e.preventDefault();
             const pwd=document.getElementById("password").value.trim();
+            acc = document.getElementById("username").value.trim();
+            role = document.getElementById("role").value;
+            
             if(!pwd){
                 alert("密碼不可為空");
                 return;
@@ -273,7 +273,7 @@ document.getElementById("insertrecord").addEventListener("click", async (e) => {
                 window.location.href='add.html';
             }
         })
-        const giveupbtn=document.getElementById("btn-danger");
+        const giveupbtn=document.getElementById("giveup");
         giveupbtn.addEventListener("click",()=>{
             window.location.href='add.html';
         })
