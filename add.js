@@ -42,11 +42,17 @@ function rendertbody({ id, user_name, acc, role }) {
                 <tr>
                     <th scope="row">${id}</th>
                     <td>${user_name}</td>
-                    <td>${acc}</td>
-                    <td>${role}</td>
-                    <td><button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${id}">
-            <i class="bi bi-trash"></i> 刪除
-        </button></td>
+                    <td data-acc="${acc}">${acc}</td>
+                    <td data-role='${role}'>${role}</td>
+                    <td>
+                        <button type="button" class="btn btn-info btn-sm update-btn" data-uid="${id}">
+                            <i class="bi bi-pencil"></i>更改
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${id}">
+                            <i class="bi bi-trash"></i> 刪除
+                        </button>
+                        
+                    </td>
                 </tr>
  
  `;
@@ -85,6 +91,44 @@ function renderadd() {
     `;
 }
 
+function renderupdate({id,acc,role}) {
+    return `
+    <h2 class="mb-4">更新使用者</h2>
+        <form id="createUserForm">
+            <!-- id  -->
+            <div class="mb-3">
+                <label for="username" class="form-label">id </label>
+                <input type="text" class="form-control" id="userid" placeholder="請輸入id" value="${id}" readonly>
+            </div>
+            <!-- 姓名 (帳號) -->
+            <div class="mb-3">
+                <label for="username" class="form-label">姓名 (帳號)</label>
+                <input type="text" class="form-control" id="username" placeholder="請輸入姓名或帳號" value="${acc}">
+            </div>
+
+            <!-- 密碼 -->
+            <div class="mb-3">
+                <label for="password" class="form-label">密碼</label>
+                <input type="password" class="form-control" id="password" placeholder="請輸入密碼" >
+            </div>
+
+    
+            <!-- 身分別 -->
+            <div class="mb-3">
+                <label for="role" class="form-label"></label>
+                <select class="form-select" id="role">
+                    <option selected disabled>${role}</option>
+                    <option value="manager">管理者</option>
+                    <option value="system_administrator">系統管理者</option>
+                </select>
+            </div>
+
+            <!-- 送出按鈕 -->
+            <button type="submit"id="updatebtn" class="btn btn-primary">更新使用者</button>
+            <button type="submit"id="giveup" class="btn btn-danger">捨棄</button>
+        </form>
+    `;
+}
 
 const adminheader = document.getElementById("header");
 adminheader.classList.add("bg-secondary", "container-fluid", "py-5", "shadow", "text-center", "header");
@@ -188,7 +232,54 @@ addUserBtn.addEventListener("click", () => {
 
 });
 
+
 document.getElementById("insertrecord").addEventListener("click", async (e) => {
+    if(e.target.closest(".update-btn")){
+        const ubtn=e.target.closest(".update-btn");
+        const tr = ubtn.closest("tr");
+        console.log(tr);
+        const id=ubtn.dataset.uid;
+        const acc = tr.querySelector('td[data-acc]').dataset.acc;
+        const role = tr.querySelector('td[data-role]').dataset.role;
+
+        console.log("acc"+acc);
+        console.log("role"+role);
+        const viewuser = document.getElementById("viewuser");
+        viewuser.innerHTML = '';
+        addUserBtn.classList.add("d-none");
+        const updateviewcard=document.getElementById('addviewcard');
+        updateviewcard.innerHTML=renderupdate({id,acc,role});
+            /* 下面繼續 */
+        
+        const btn=document.getElementById("updatebtn");
+        btn.addEventListener("click",async(e)=>{
+            e.preventDefault();
+            const pwd=document.getElementById("password").value.trim();
+            if(!pwd){
+                alert("密碼不可為空");
+                return;
+            }
+            const response=await fetch("update.php",{
+                method:"POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id,acc,pwd,role })
+            });
+            const result = await response.json();
+            if (result.status === 'success') {
+                alert('更新成功！');
+                window.location.href='add.html';
+            } else {
+                alert('更新失敗：' + result.message);
+                window.location.href='add.html';
+            }
+        })
+        const giveupbtn=document.getElementById("btn-danger");
+        giveupbtn.addEventListener("click",()=>{
+            window.location.href='add.html';
+        })
+        
+
+    }
     if (e.target.closest(".delete-btn")) {
         const btn = e.target.closest(".delete-btn");
         const id = btn.dataset.id;
