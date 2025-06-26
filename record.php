@@ -4,7 +4,7 @@ header('Content-type:application/json');
 $rowdata = file_get_contents('php://input');
 $data = json_decode($rowdata, true);
 $name=$data['username'] ?? '';
-$sql='SELECT Name, InOrOut, Date, Time, IPAddress
+$sql='SELECT id, Name, InOrOut, Date, Time, IPAddress
 FROM punch_record
 WHERE Name = ?
 ORDER BY Date DESC, Time DESC';
